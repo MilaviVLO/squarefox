@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карточки SquareFox</title>
+  <style>
+    body {
+      background: #1e0033;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-wrap: wrap;
+      gap: 40px;
+    }
+    .card {
+      background-color: transparent;
+      width: 300px;
+      height: 500px;
+      perspective: 1000px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .card-front {
+      background: #fff;
+    }
+    .card-front img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-back {
+      background-color: #2d004d;
+      color: white;
+      transform: rotateY(180deg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+    }
+    
+    /* Звук */
+    #toggle-music {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #toggle-music:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+    
+    #toggle-music svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+    
+    /* Анимация для кнопки */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .music-pulse {
+      animation: pulse 2s infinite;
+    }
+  </style>
+
+<style>
+  /* Фон (Звёздашки) */
+  #starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  .card-back {
+    background: linear-gradient(135deg, rgba(45,0,77,0.9), rgba(80,20,100,0.9));
+    color: white;
+    transform: rotateY(180deg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 1.1em;
+    text-shadow: 0 0 5px #000;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+  }
+</style>
+
+</head>
+<body>
+  <!-- КАРТОЧКИ БЕБЕБ -->
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Дез.png" alt="Дезгай">
+      </div>
+      <div class="card-back">
+        <h2>Дезгай</h2>
+        <p>Таинственный и мощный персонаж, владеющий темными силами. Его цель — раскрыть секреты мира SquareFox.</p>
+      </div>
+    </div>
+  </div>
+<div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Милави.png" alt="Милави">
+      </div>
+      <div class="card-back">
+        <h2>Милави</h2>
+        <p>Добродушный герой, обладающий магией света. Защищает друзей и стремится к гармонии во вселенной SquareFox.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="НЭРЗ.png" alt="НЭРЗ">
+      </div>
+      <div class="card-back">
+        <h2>Нэрз</h2>
+        <p>Добродушный. Защищает друзей и стремится к гармонии во вселенной SquareFox.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Риша.png" alt="Риша">
+      </div>
+      <div class="card-back">
+        <h2>Риша</h2>
+        <p>Неудавшийся репер, вступивший в клуб 27</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Скром.png" alt="Скром">
+      </div>
+      <div class="card-back">
+        <h2>Скромник</h2>
+        <p>Добродушный. Защищает друзей и стремится к гармонии во вселенной SquareFox.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Сода.png" alt="Сода">
+      </div>
+      <div class="card-back">
+        <h2>Сода</h2>
+        <p>Добродушный. Защищает друзей и стремится к гармонии во вселенной SquareFox.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Фокс.png" alt="Фокс">
+      </div>
+      <div class="card-back">
+        <h2>Фокс</h2>
+        <p>Добродушный. Защищает друзей и стремится к гармонии во вселенной SquareFox.</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Цукаса.png" alt="Цукаса">
+      </div>
+      <div class="card-back">
+        <h2>Цукаса</h2>
+        <p>Юноша возраста 19-20 лет.
+Геторохрамия не просто так. В его голове находится две личности.
+Первая — самоуверенный и харизматичный юноша, который стремится стать звездой мирового уровня. 
+Вторая — Командир Мобильной Опартивной Группы Гамма-4 "SquareFox". Хладнокровный и мрачный мужчина, который знает, что приказ превыше всего..</p>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-inner">
+      <div class="card-front">
+        <img src="Чоппер.png" alt="Чоппер">
+      </div>
+      <div class="card-back">
+        <h2>Чоппер</h2>
+        <p>Добродушный. Защищает друзей и стремится к гармонии во вселенной SquareFox.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Аудио и кнопки -->
+  <audio id="bg-music" src="music.mp3" loop></audio>
+  <button id="toggle-music">
+    <svg id="sound-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+    </svg>
+  </button>
+
+  <canvas id="starfield"></canvas>
+
+  <script>
+    // Инициализация элементов
+    const music = document.getElementById('bg-music');
+    const btn = document.getElementById('toggle-music');
+    const soundIcon = document.getElementById('sound-icon');
+    
+    // По умолчанию музыка выключена
+    music.pause();
+    
+    // Обработчик клика по кнопке
+    btn.addEventListener('click', () => {
+      if (music.paused) {
+        music.play()
+          .then(() => {
+            btn.classList.add('music-pulse');
+            soundIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+          })
+          .catch(error => {
+            console.error('Ошибка воспроизведения:', error);
+          });
+      } else {
+        music.pause();
+        btn.classList.remove('music-pulse');
+        soundIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+      }
+    });
+
+    // Звёздное небо
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let w, h, mouseX = 0, mouseY = 0;
+
+    function init() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      stars = Array.from({ length: 200 }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.5 + 0.5,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+      }));
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, w, h);
+      for (let s of stars) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'white';
+        ctx.fill();
+
+        // движение от мыши
+        let angle = Math.atan2(mouseY - s.y, mouseX - s.x);
+        s.x += Math.cos(angle) * 0.1 + s.dx;
+        s.y += Math.sin(angle) * 0.1 + s.dy;
+
+        if (s.x < 0 || s.x > w || s.y < 0 || s.y > h) {
+          s.x = Math.random() * w;
+          s.y = Math.random() * h;
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', init);
+    window.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    init();
+    animate();
+  </script>
+</body>
+</html>

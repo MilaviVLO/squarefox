@@ -6,34 +6,54 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Карточки SquareFox</title>
   <style>
+    /* Базовые стили */
     body {
       background: #1e0033;
-      font-family: sans-serif;
+      font-family: 'Arial', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       flex-wrap: wrap;
       gap: 40px;
+      padding: 20px;
+      margin: 0;
+      overflow-x: hidden;
+      position: relative;
     }
+
+    /* Стили карточек */
     .card {
       background-color: transparent;
       width: 300px;
       height: 500px;
-      perspective: 1000px;
+      perspective: 1200px;
+      transition: all 0.5s ease;
+      position: relative;
+      z-index: 2;
     }
+
+    .card:hover {
+      transform: translateY(-15px);
+    }
+
     .card-inner {
       position: relative;
       width: 100%;
       height: 100%;
       text-align: center;
-      transition: transform 0.8s;
+      transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
       transform-style: preserve-3d;
       cursor: pointer;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
     }
+
     .card:hover .card-inner {
       transform: rotateY(180deg);
+      box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
     }
+
     .card-front, .card-back {
       position: absolute;
       width: 100%;
@@ -41,97 +61,238 @@
       backface-visibility: hidden;
       border-radius: 20px;
       overflow: hidden;
+      transition: all 0.8s ease;
     }
+
     .card-front {
       background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform: rotateY(0deg);
+      z-index: 2;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
+    .card:hover .card-front {
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
     .card-front img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform 0.8s ease;
     }
+
+    .card:hover .card-front img {
+      transform: scale(1.03);
+    }
+
     .card-back {
-      background-color: #2d004d;
+      background: linear-gradient(135deg, rgba(70, 0, 120, 0.85), rgba(100, 30, 150, 0.85), rgba(40, 0, 80, 0.9));
       color: white;
       transform: rotateY(180deg);
-      padding: 20px;
+      padding: 25px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       font-size: 18px;
+      box-shadow: inset 0 0 20px rgba(200, 160, 255, 0.3);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      border: 1px solid rgba(200, 160, 255, 0.2);
     }
-    
-    /* Звук */
-    #toggle-music {
+
+    .card-back h2 {
+      margin-bottom: 15px;
+      font-size: 1.8em;
+      color: #fff;
+      position: relative;
+    }
+
+    .card-back h2::after {
+      content: '';
+      display: block;
+      width: 50px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+      margin: 10px auto;
+    }
+
+    .card-back p {
+      margin: 0;
+      line-height: 1.5;
+      font-size: 1em;
+    }
+
+    /* Кнопки соцсетей */
+    .top-buttons {
       position: fixed;
       top: 20px;
       right: 20px;
       z-index: 1000;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      max-width: 300px;
+    }
+
+    .top-button {
+      background: rgba(100, 30, 150, 0.7);
+      border: 1px solid rgba(200, 160, 255, 0.2);
       border-radius: 50%;
       width: 50px;
       height: 50px;
       cursor: pointer;
       backdrop-filter: blur(5px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       transition: all 0.3s ease;
       display: flex;
       justify-content: center;
       align-items: center;
     }
-    
-    #toggle-music:hover {
-      background: rgba(255, 255, 255, 0.2);
+
+    .top-button:hover {
+      background: rgba(138, 43, 226, 0.9);
       transform: scale(1.1);
+      box-shadow: 0 3px 15px rgba(138, 43, 226, 0.3);
     }
-    
-    #toggle-music svg {
+
+    .top-button svg {
       width: 24px;
       height: 24px;
       fill: white;
     }
-    
-    /* Анимация для кнопки */
+
+    /* Анимация для кнопки звука */
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
-    
+
     .music-pulse {
       animation: pulse 2s infinite;
     }
+
+    /* Фон (Звёзды) */
+    #starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Анимация мачете */
+    #machete {
+      position: fixed;
+      width: 150px;
+      height: 150px;
+      z-index: 1;
+      pointer-events: none;
+      transform: rotate(-45deg);
+      opacity: 0;
+      left: -200px;
+      bottom: -200px;
+      filter: drop-shadow(0 0 8px rgba(200, 160, 255, 0.6));
+    }
+
+    .machete-fly {
+      animation: fly 12s ease-in-out forwards;
+    }
+
+    @keyframes fly {
+      0% {
+        left: -200px;
+        bottom: -200px;
+        transform: rotate(-45deg) scale(1);
+        opacity: 0.8;
+      }
+      15% {
+        transform: rotate(-50deg) scale(1);
+      }
+      30% {
+        transform: rotate(-40deg) scale(1);
+      }
+      45% {
+        transform: rotate(-55deg) scale(1);
+      }
+      60% {
+        transform: rotate(-35deg) scale(1);
+      }
+      75% {
+        transform: rotate(-50deg) scale(1);
+      }
+      90% {
+        transform: rotate(-40deg) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        left: calc(100% + 200px);
+        bottom: calc(100% + 200px);
+        transform: rotate(-45deg) scale(1);
+        opacity: 0;
+      }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      body {
+        gap: 25px;
+        padding: 15px;
+      }
+      
+      .card {
+        width: 280px;
+        height: 450px;
+      }
+      
+      .card-back {
+        padding: 20px;
+        font-size: 16px;
+      }
+      
+      .top-buttons {
+        top: 15px;
+        right: 15px;
+      }
+
+      #machete {
+        width: 120px;
+        height: 120px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .card {
+        width: 260px;
+        height: 420px;
+      }
+      
+      .top-button {
+        width: 44px;
+        height: 44px;
+      }
+      
+      .top-button svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      #machete {
+        width: 100px;
+        height: 100px;
+      }
+    }
   </style>
-
-<style>
-  /* Фон (Звёздашки) */
-  #starfield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-  .card-back {
-    background: linear-gradient(135deg, rgba(45,0,77,0.9), rgba(80,20,100,0.9));
-    color: white;
-    transform: rotateY(180deg);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    font-size: 1.1em;
-    text-shadow: 0 0 5px #000;
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
-  }
-</style>
-
 </head>
 <body>
-  <!-- КАРТОЧКИ БЕБЕБ -->
+  <!-- Карточки персонажей -->
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -143,21 +304,19 @@
       </div>
     </div>
   </div>
-<div class="card">
+  
+  <div class="card">
     <div class="card-inner">
       <div class="card-front">
         <img src="Милави.png" alt="Милави">
       </div>
       <div class="card-back">
         <h2>Милави</h2>
-        <p>— Well well well..
-Кажется, ко мне приближаются новые знакомства..
-Милави — персонаж, впервые появившийся на SquareFox2.
-Путешествуя между вселенными, наркозависимая приняла для себя одну истину:
-«Мы находимся на краю. Далеко от центра. И твоя задача — находиться здесь. Тут безопасно. Твоя жизнь не будет разрушена, пока ты не приблизишься "к ним"».</p>
+        <p>— Well well well.. Кажется, ко мне приближаются новые знакомства.. Милави — персонаж, впервые появившийся на SquareFox2. Путешествуя между вселенными, наркозависимая приняла для себя одну истину: «Мы находимся на краю. Далеко от центра. И твоя задача — находиться здесь. Тут безопасно. Твоя жизнь не будет разрушена, пока ты не приблизишься "к ним"».</p>
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -169,6 +328,7 @@
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -176,11 +336,11 @@
       </div>
       <div class="card-back">
         <h2>Рина</h2>
-        <p>Рина, талантливая рэперша, мечтала о славе, но суровая реальность не дала ей пробиться. Годы шли, разочарование росло.
-Теперь она в междумирье — серой, бесконечной пустоте. Здесь нет сцен, фанатов или лейблов, лишь отголоски несбывшихся мечтаний. Но Рина не сдаётся. Она учится заново биту, рифме. Ей предстоит заново построить свою аудиторию из теней и заблудших душ, доказывая, что даже после смерти можно добиться своей мечты. Сумеет ли она стать легендой в этом потустороннем мире?</p>
+        <p>Рина, талантливая рэперша, мечтала о славе, но суровая реальность не дала ей пробиться. Годы шли, разочарование росло. Теперь она в междумирье — серой, бесконечной пустоте. Здесь нет сцен, фанатов или лейблов, лишь отголоски несбывшихся мечтаний. Но Рина не сдаётся. Она учится заново биту, рифме. Ей предстоит заново построить свою аудиторию из теней и заблудших душ, доказывая, что даже после смерти можно добиться своей мечты. Сумеет ли она стать легендой в этом потустороннем мире?</p>
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -188,10 +348,11 @@
       </div>
       <div class="card-back">
         <h2>Скромник</h2>
-        <p>-Когда я кого-то спасаю, неважно человек это или монстр, если они просят о помощи, этого более чем достаточно!</p>
+        <p>-Когда я кого-то спасаю, неважно человек это или монстр, если они просят о помощи, этого более чем достаточно!</p>
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -199,10 +360,11 @@
       </div>
       <div class="card-back">
         <h2>Сода</h2>
-        <p>Содари — спокойный парень, любит иногда поболтать, но очень осторожен с незнакомцами. Однако есть чувство, что с ним что-то не так… Странные мысли и воспоминания преследуют его. А может, кто-то преследует его… в голове?.</p>
+        <p>Содари — спокойный парень, любит иногда поболтать, но очень осторожен с незнакомцами. Однако есть чувство, что с ним что-то не так… Странные мысли и воспоминания преследуют его. А может, кто-то преследует его… в голове?</p>
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -214,6 +376,7 @@
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -221,13 +384,11 @@
       </div>
       <div class="card-back">
         <h2>Цукаса</h2>
-        <p>Юноша возраста 19-20 лет.
-Геторохрамия не просто так. В его голове находится две личности.
-Первая — самоуверенный и харизматичный юноша, который стремится стать звездой мирового уровня. 
-Вторая — Командир Мобильной Опартивной Группы Гамма-4 "SquareFox". Хладнокровный и мрачный мужчина, который знает, что приказ превыше всего..</p>
+        <p>Юноша возраста 19-20 лет. Геторохрамия не просто так. В его голове находится две личности. Первая — самоуверенный и харизматичный юноша, который стремится стать звездой мирового уровня. Вторая — Командир Мобильной Опартивной Группы Гамма-4 "SquareFox". Хладнокровный и мрачный мужчина, который знает, что приказ превыше всего.</p>
       </div>
     </div>
   </div>
+  
   <div class="card">
     <div class="card-inner">
       <div class="card-front">
@@ -242,11 +403,41 @@
 
   <!-- Аудио и кнопки -->
   <audio id="bg-music" src="music.mp3" loop></audio>
-  <button id="toggle-music">
-    <svg id="sound-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-    </svg>
-  </button>
+  
+  <div class="top-buttons">
+    <button id="toggle-music" class="top-button">
+      <svg id="sound-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+      </svg>
+    </button>
+    
+    <a href="https://discord.gg/TAZXS4BaN3" target="_blank" class="top-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M14.82 4.26a10.14 10.14 0 0 0-.53 1.1 14.66 14.66 0 0 0-4.58 0 10.14 10.14 0 0 0-.53-1.1 16 16 0 0 0-4.13 1.3 17.33 17.33 0 0 0-3 11.59 16.6 16.6 0 0 0 5.07 2.59A12.89 12.89 0 0 0 8.23 18a9.65 9.65 0 0 1-1.71-.83 3.39 3.39 0 0 0 .42-.33 11.66 11.66 0 0 0 10.12 0q.21.18.42.33a10.84 10.84 0 0 1-1.71.83 12.41 12.41 0 0 0 1.08 1.78 16.44 16.44 0 0 0 5.06-2.59 17.22 17.22 0 0 0-3-11.59 16.09 16.09 0 0 0-4.09-1.35zM8.68 14.81a1.94 1.94 0 0 1-1.8-2 1.93 1.93 0 0 1 1.8-2 1.93 1.93 0 0 1 1.8 2 1.93 1.93 0 0 1-1.8 2zm6.64 0a1.94 1.94 0 0 1-1.8-2 1.93 1.93 0 0 1 1.8-2 1.92 1.92 0 0 1 1.8 2 1.92 1.92 0 0 1-1.8 2z"/>
+      </svg>
+    </a>
+    
+    <a href="https://vk.com/squarefox_off" target="_blank" class="top-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm.84 12.27a1.07 1.07 0 0 1-.75.11c-.26 0-.51-.04-.75-.11-1.03 0-1.5-.63-2.11-1.56-.47-.72-.82-1.22-1.62-1.22-.27 0-.53.08-.76.25-.28.21-.43.53-.43.9 0 .84.58 1.64 1.65 2.77 1.17 1.24 1.81 1.89 2.83 1.89 1.27 0 1.91-.67 1.91-1.8 0-.56-.14-1.03-.42-1.41-.23-.32-.63-.53-1.06-.6z"/>
+      </svg>
+    </a>
+    
+    <a href="https://t.me/SquareF0x" target="_blank" class="top-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.69 1.03-.59.06-1.03-.39-1.6-.76-.89-.58-1.39-.94-2.25-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.07-.02-.1-.03-.03-.08-.04-.12-.02-.05.02-3.08 1.96-4.38 2.86-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.13-.31-1.09-.66.02-.18.27-.37.75-.56 2.57-1.06 4.29-1.77 6.39-2.71.96-.42 1.92-.89 2.83-1.34.41-.19.78-.28 1.06-.27.34.01.93.2.93.74-.01.25-.15.83-.23 1.13z"/>
+      </svg>
+    </a>
+    
+    <a href="https://www.youtube.com/@squarefox_minecraft" target="_blank" class="top-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Летящая мачете -->
+  <img id="machete" src="machete.png" alt="Мачете">
 
   <canvas id="starfield"></canvas>
 
@@ -255,11 +446,12 @@
     const music = document.getElementById('bg-music');
     const btn = document.getElementById('toggle-music');
     const soundIcon = document.getElementById('sound-icon');
+    const machete = document.getElementById('machete');
     
     // По умолчанию музыка выключена
     music.pause();
     
-    // Обработчик клика по кнопке
+    // Обработчик клика по кнопке звука
     btn.addEventListener('click', () => {
       if (music.paused) {
         music.play()
@@ -277,11 +469,23 @@
       }
     });
 
+    // Запуск анимации мачете при загрузке (один раз)
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        machete.classList.add('machete-fly');
+        
+        // Удаляем элемент после завершения анимации
+        machete.addEventListener('animationend', () => {
+          machete.remove();
+        });
+      }, 1000);
+    });
+
     // Звёздное небо
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
     let stars = [];
-    let w, h, mouseX = 0, mouseY = 0;
+    let w, h;
 
     function init() {
       w = canvas.width = window.innerWidth;
@@ -303,10 +507,8 @@
         ctx.fillStyle = 'white';
         ctx.fill();
 
-        // движение от мыши
-        let angle = Math.atan2(mouseY - s.y, mouseX - s.x);
-        s.x += Math.cos(angle) * 0.1 + s.dx;
-        s.y += Math.sin(angle) * 0.1 + s.dy;
+        s.x += s.dx;
+        s.y += s.dy;
 
         if (s.x < 0 || s.x > w || s.y < 0 || s.y > h) {
           s.x = Math.random() * w;
@@ -317,11 +519,6 @@
     }
 
     window.addEventListener('resize', init);
-    window.addEventListener('mousemove', e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
     init();
     animate();
   </script>
